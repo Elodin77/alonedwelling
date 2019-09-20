@@ -1,0 +1,26 @@
+.button {
+    border: 1px solid black;
+    
+}
+
+.button:hover {
+    text-decoration: underline;
+}
+
+.redtext {
+    color: red;
+}
+
+.greentext {
+    color: green;
+}
+
+.left {
+    display: inline-block;
+    vertical-align: text-bottom;
+}
+
+textarea {
+    margin: 0px;
+    vertical-align: text-bottom;
+}
