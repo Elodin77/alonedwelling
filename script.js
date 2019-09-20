@@ -30,19 +30,34 @@ function check_cookie(x, backup) {
     set_cookie(x, backup, 365);
 }
 }
-function restart() {
-    set_cookie("woodcutter", 0);
-    set_cookie("wood", 0);
+function restart(hard = 0) {
+    if (hard) {
+        set_cookie("woodcutter", 0);
+        set_cookie("wood", 0);
+        set_cookie("people", 0);
+    }
+    else {
+        check_cookie("woodcutter", 0);
+        check_cookie("wood", 0);
+        check_cookie("people", 0);
+    }
 }
 
 function add_to_cookie(key, value) {
     if (Number(get_cookie(key)) + value >= 0) {
-        set_cookie(key, Number(get_cookie(key)) + value, 365);
+        if (key != "woodcutter") {
+            set_cookie(key, Number(get_cookie(key)) + value, 365);
+        }
+        else if (Number(get_cookie("people"))>=value){
+            set_cookie(key, Number(get_cookie(key)) + value, 365);
+            set_cookie("people", Number(get_cookie("people")) - value,365);
+        }
     }
 }
 function update_people() {
     // Update HTML
     document.getElementById("woodcutter").innerHTML = "Woodcutter: " + get_cookie("woodcutter");
+    document.getElementById("people").innerHTML = "People: " + get_cookie("people");
 
 
 }
@@ -54,9 +69,21 @@ function update_resources() {
     add_to_cookie("wood", auto);
     // Update HTML
     document.getElementById("wood").innerHTML = "Wood: " + parseInt(get_cookie("wood")) + " (" + Math.round(auto * 100) / 100+")";
-
-
+}
+function chance() {
+    if (Math.floor(Math.random() * 10) == 0) {
+        add_to_cookie("people", 1);
+        notify("A stranger came to the dwelling.");
+    }
+    if (Math.floor(Math.random() * 30) == 0) {
+        add_to_cookie("people", 4);
+        notify("A family arrived at the dwelling.");
+    }
+}
+function notify(msg) {
+    return 0;
 }
 // NON-FUNCTIONS
 setInterval(update_people, 100);
 setInterval(update_resources, 1000);
+setInterval(chance, 1000);
