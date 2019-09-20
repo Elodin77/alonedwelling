@@ -31,18 +31,18 @@ function checkCookie(x, backup) {
 }
 }
 function restart() {
-    checkCookie("woodcutter_value", 0);
-    checkCookie("wood", 0);
+    setCookie("woodcutter_value", 0);
+    setCookie("wood", 0);
 }
 
 function edit(key, value) {
-    setCookie(key, getCookie(key) + value,365);
+    setCookie(key, parseInt(getCookie(key)) + value,365);
 }
 function update() {
     // Update HTML
     document.getElementById("woodcutter").innerHTML = "Woodcutter: " + parseInt(getCookie("woodcutter_value"));
     // Update Cookies
-    setCookie("wood", getCookie("wood") + getCookie("woodcutter_value"));
+    setCookie("wood", parseInt(getCookie("wood")) + parseInt(getCookie("woodcutter_value")));
 }
 // NON-FUNCTIONS
 setInterval(function () {
