@@ -36,10 +36,11 @@ function restart() {
 }
 
 function add_to_cookie(key, value) {
-    set_cookie(key, Number(get_cookie(key)) + value, 365);
+    if (Number(get_cookie(key)) + value >= 0) {
+        set_cookie(key, Number(get_cookie(key)) + value, 365);
+    }
 }
 function update_people() {
-
     // Update HTML
     document.getElementById("woodcutter").innerHTML = "Woodcutter: " + get_cookie("woodcutter");
 
@@ -49,7 +50,7 @@ function update_people() {
 function update_resources() {
     // Update Cookies
     var auto = 0.0;
-    auto += Number(get_cookie("woodcutter"));
+    auto += Number(get_cookie("woodcutter"))/5;
     add_to_cookie("wood", auto);
     // Update HTML
     document.getElementById("wood").innerHTML = "Wood: " + parseInt(get_cookie("wood")) + " (" + Math.round(auto * 100) / 100+")";
