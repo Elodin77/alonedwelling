@@ -24,12 +24,12 @@ textarea {
     margin: 0px;
     vertical-align: text-bottom;
 }
+th {
+    border: 1px solid black;
+}
 td {
-    border: 3px solid black;
+    border: 1px solid black;
 }
 tr {
-    border: 3px solid black;
-}
-table {
-    border: 3px solid black;
+    border: 1px solid black;
 }

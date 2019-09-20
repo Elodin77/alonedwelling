@@ -3,13 +3,13 @@
 //FUNCTIONS
 
 
-function setCookie(cname, cvalue, exdays) {
+function set_cookie(cname, cvalue, exdays) {
     var d = new Date();
     d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
     var expires = "expires=" + d.toUTCString();
     document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
 }
-function getCookie(cname) {
+function get_cookie(cname) {
     var name = cname + "=";
     var decodedCookie = decodeURIComponent(document.cookie);
     var ca = decodedCookie.split(';');
@@ -25,27 +25,37 @@ function getCookie(cname) {
     return "";
 }
 
-function checkCookie(x, backup) {
-    if (getCookie(x) == "") {
-    setCookie(x, backup, 365);
+function check_cookie(x, backup) {
+    if (get_cookie(x) == "") {
+    set_cookie(x, backup, 365);
 }
 }
 function restart() {
-    setCookie("woodcutter_value", 0);
-    setCookie("wood", 0);
+    set_cookie("woodcutter", 0);
+    set_cookie("wood", 0);
 }
 
-function edit(key, value) {
-    setCookie(key, parseInt(getCookie(key)) + value,365);
+function add_to_cookie(key, value) {
+    set_cookie(key, Number(get_cookie(key)) + value, 365);
 }
-function update() {
+function update_people() {
+
     // Update HTML
-    document.getElementById("woodcutter").innerHTML = "Woodcutter: " + parseInt(getCookie("woodcutter_value"));
+    document.getElementById("woodcutter").innerHTML = "Woodcutter: " + get_cookie("woodcutter");
+
+
+}
+
+function update_resources() {
     // Update Cookies
-    setCookie("wood", parseInt(getCookie("wood")) + parseInt(getCookie("woodcutter_value")));
+    var auto = 0.0;
+    auto += Number(get_cookie("woodcutter"));
+    add_to_cookie("wood", auto);
+    // Update HTML
+    document.getElementById("wood").innerHTML = "Wood: " + parseInt(get_cookie("wood")) + " (" + Math.round(auto * 100) / 100+")";
+
+
 }
 // NON-FUNCTIONS
-setInterval(function () {
-    update();
-
-}, 100);
+setInterval(update_people, 100);
+setInterval(update_resources, 1000);
