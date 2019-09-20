@@ -40,7 +40,7 @@ function edit(key, value) {
 }
 function update() {
     // Update HTML
-    document.getElementById("woodcutter_value").innerHTML = parseInt(getCookie("woodcutter_value"));
+    document.getElementById("woodcutter").innerHTML = "Woodcutter: " + parseInt(getCookie("woodcutter_value"));
     // Update Cookies
     setCookie("wood", getCookie("wood") + getCookie("woodcutter_value"));
 }
