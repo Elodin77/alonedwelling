@@ -1,7 +1,8 @@
+<!DOCTYPE html>
 <html>
 <head>
     <title>A Lone Dwelling</title>
-    <p>Version 0.0.4</p>
+    <p>Version 0.0.5</p>
     <br>
 
     <link rel="stylesheet" href="stylesheet.css" />
@@ -27,6 +28,11 @@
 
             </td>
             <td>
+                <div class="tooltip">
+                    <div id="house">House: -</div>
+                    <button onclick="add_to_cookie('house',1)">+</button>
+                    <span class="tooltiptext" id="house_tooltip">tooltip</span>
+                </div>
 
             </td>
             <td>
@@ -40,7 +46,7 @@
             </td>
         </tr>
     </table>
-    <button onclick="restart()">Restart</button>
+    <button onclick="restart(hard=1)">Restart</button>
 
 
 
