@@ -3,6 +3,8 @@ var HOUSE_GROWTH = 1.05;
 var HOUSE_SIZE = 5; // People per house
 var WOODCUTTER_EFFICIENCY = 5; // This many people is required for 1 unit per second
 var WOOD_REFINER_EFFICIENCY = 2;
+var HAPPINESS_EFFICIENCY = 2;
+var HAPPINESS_DROP = 0;
 
 //FUNCTIONS
 
@@ -42,6 +44,7 @@ function restart(hard = 0) {
         set_cookie("house", 1);
         set_cookie("refined_wood", 0);
         set_cookie("wood_refiner", 0);
+        set_cookie("happiness", 0);
     }
     else {
         check_cookie("woodcutter", 0);
@@ -50,6 +53,7 @@ function restart(hard = 0) {
         check_cookie("house", 1);
         check_cookie("refined_wood", 0);
         check_cookie("wood_refiner", 0);
+        check_cookie("happiness", 0);
     }
 }
 
@@ -60,6 +64,8 @@ function add_to_cookie(key, value) {
             if (Number(get_cookie("people")) >= value) {
                 set_cookie(key, Number(get_cookie(key)) + value, 365);
                 set_cookie("people", Number(get_cookie("people")) - value, 365);
+                add_to_cookie("happiness", -5);
+                HAPPINESS_DROP += parseInt(get_cookie(key));
             }
         }
         else if (key == "house") {
@@ -102,8 +108,22 @@ function update_divs() {
 function update_resources() {
     // Update Cookies
     var auto = 0.0;
-    var wood_auto = Number(get_cookie("woodcutter")) / WOODCUTTER_EFFICIENCY;
-    var refined_wood_auto = Number(get_cookie("wood_refiner")) / WOOD_REFINER_EFFICIENCY
+    if (HAPPINESS_DROP > 1) {
+        HAPPINESS_DROP *= 0.9;
+    }
+    var happiness_multiplier = 1+(parseFloat(get_cookie("happiness")) / 100 - 0.5);
+    var wood_auto = Number(get_cookie("woodcutter")) / WOODCUTTER_EFFICIENCY * happiness_multiplier;
+    var refined_wood_auto = Number(get_cookie("wood_refiner")) / WOOD_REFINER_EFFICIENCY * happiness_multiplier;
+    var happiness_auto = get_cookie("people") / HAPPINESS_EFFICIENCY;
+    // happiness
+    auto = happiness_auto - Math.pow(1.05,HAPPINESS_DROP);
+    if (get_cookie("happiness") + auto > 100) {
+        set_cookie("happiness", 100);
+    }
+    else {
+        add_to_cookie("happiness", auto);
+    }
+    document.getElementById("happiness").innerHTML = "Happiness: " + parseInt(get_cookie("happiness")) + " (" + Math.round(auto * 100) / 100 + ") " + "["+parseInt(HAPPINESS_DROP)+"]";
     // wood
     auto = wood_auto - refined_wood_auto;
     if (refined_wood_auto < get_cookie("wood")) {
@@ -117,9 +137,9 @@ function update_resources() {
     // refined wood
     auto = parseFloat(refined_wood_auto);
     add_to_cookie("refined_wood", auto);
+    document.getElementById("refined_wood").innerHTML = "Refined Wood: " + parseInt(get_cookie("refined_wood")) + " (" + Math.round(auto * 100) / 100 + ")";
 
     
-    document.getElementById("refined_wood").innerHTML = "Refined Wood: " + parseInt(get_cookie("refined_wood")) + " (" + Math.round(auto * 100) / 100 + ")";
     
 
     // Update BUILDS
