@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>A Lone Dwelling</title>
-    <p>Version 0.0.5</p>
+    <p>Version 0.0.6</p>
     <br>
 
     <link rel="stylesheet" href="stylesheet.css" />
@@ -20,10 +20,19 @@
             <td>
                 <div id="people">People: -</div>
                 <br />
-                <div id="woodcutter">Woodcutter: -</div>
-                <button onclick="add_to_cookie('woodcutter',1)">+</button>
-                <button onclick="add_to_cookie('woodcutter',-1)">-</button>
-                <br />
+                <div id="woodcutter_field">
+                    <div id="woodcutter">Woodcutter: -</div>
+                    <button onclick="add_to_cookie('woodcutter',1)">+</button>
+                    <button onclick="add_to_cookie('woodcutter',-1)">-</button>
+                    <br />
+                </div>
+                <div id="wood_refiner_field">
+                    <div id="wood_refiner">Wood refiner: -</div>
+                    <button onclick="add_to_cookie('wood_refiner',1)">+</button>
+                    <button onclick="add_to_cookie('wood_refiner',-1)">-</button>
+                    <br />
+                </div>
+                
 
 
             </td>
@@ -40,7 +49,8 @@
             </td>
             <td>
                 <div id="wood">Wood: -</div><br />
-                
+                <div id="refined_wood">Refined Wood: -</div><br />
+
 
 
             </td>
