@@ -1,13 +1,18 @@
 
-
+// VARIABLES
 var WOODCUTTER_EFFICIENCY = 5; // This many people is required for 1 unit per second
-var WOOD_REFINER_EFFICIENCY = 2;
+var WOOD_REFINER_EFFICIENCY = 3;
 var HAPPINESS_EFFICIENCY = 2;
 var HAPPINESS_DROP = 0;
+var HUNTER_EFFICIENCY = 4;
 
 var HOUSE_GROWTH = 1.05;
 var HOUSE_SIZE = 5; // People per house
 var HOUSE_PRICE = 40;
+
+var PEOPLE = ["people", "woodcutter", "wood_refiner", "hunter","population","raw_meat"];
+var FORMAT = ["People: ", "Woodcutter: ", "Wood Refiner: ", "Hunter: ", "Population: ","Raw Meat: "];
+var COOKIE = ["woodcutter","wood","people","house","refined_wood","wood_refiner","happiness","population","hunter","raw_meat"];
 
 //FUNCTIONS
 
@@ -41,24 +46,16 @@ function check_cookie(x, backup) {
 }
 function restart(hard = 0) {
     if (hard) {
-        set_cookie("woodcutter", 0);
-        set_cookie("wood", 0);
-        set_cookie("people", 0);
+        for (var i = 0; i < COOKIE.length; i++) {
+            set_cookie(COOKIE[i], 0);
+        }
         set_cookie("house", 1);
-        set_cookie("refined_wood", 0);
-        set_cookie("wood_refiner", 0);
-        set_cookie("happiness", 0);
-        set_cookie("total_people", 0);
     }
     else {
-        check_cookie("woodcutter", 0);
-        check_cookie("wood", 0);
-        check_cookie("people", 0);
+        for (var i = 0; i < COOKIE.length; i++) {
+            check_cookie(COOKIE[i],0);
+        }
         check_cookie("house", 1);
-        check_cookie("refined_wood", 0);
-        check_cookie("wood_refiner", 0);
-        check_cookie("happiness", 0);
-        check_cookie("total_people", 0);
     }
 }
 
@@ -88,14 +85,14 @@ function add_to_cookie(key, value) {
 }
 function update_people() {
     // Update HTML
-    document.getElementById("woodcutter").innerHTML = "Woodcutter: " + get_cookie("woodcutter");
-    document.getElementById("people").innerHTML = "People: " + get_cookie("people") + " ["+get_cookie("total_people")+"]";
-    document.getElementById("wood_refiner").innerHTML = "Wood Refiner: " + get_cookie("wood_refiner");
+    set_cookie("population", 0);
+    for (var i = 0; i < PEOPLE.length; i++) {
+        document.getElementById(PEOPLE[i]).innerHTML = FORMAT[i] + get_cookie(PEOPLE[i]);
+        add_to_cookie("population", Number(get_cookie(PEOPLE[i])));
+    }
 
     // Check max
-    set_cookie("total_people", Number(get_cookie("people")) + Number(get_cookie("woodcutter")) + Number(get_cookie("wood_refiner")));
-
-    if (Number(get_cookie("house")) * HOUSE_SIZE < Number(get_cookie("total_people"))) {
+    if (Number(get_cookie("house")) * HOUSE_SIZE < Number(get_cookie("population"))) {
         add_to_cookie("people", -1);
     }
 
@@ -123,9 +120,10 @@ function update_resources() {
     var wood_auto = Number(get_cookie("woodcutter")) / WOODCUTTER_EFFICIENCY * happiness_multiplier;
     var refined_wood_auto = Number(get_cookie("wood_refiner")) / WOOD_REFINER_EFFICIENCY * happiness_multiplier;
     var happiness_auto = get_cookie("people") / HAPPINESS_EFFICIENCY;
+    var raw_meat_auto = Number(get_cookie("hunter")) / HUNTER_EFFICIENCY * happiness_multiplier;
     // happiness
     auto = happiness_auto - Math.pow(1.05,HAPPINESS_DROP);
-    if (get_cookie("happiness") + auto > 100) {
+    if (Number(get_cookie("happiness")) + auto > 100) {
         set_cookie("happiness", 100);
     }
     else {
@@ -147,7 +145,10 @@ function update_resources() {
     add_to_cookie("refined_wood", auto);
     document.getElementById("refined_wood").innerHTML = "Refined Wood: " + parseInt(get_cookie("refined_wood")) + " (" + Math.round(auto * 100) / 100 + ")";
 
-    
+    // raw meat
+    auto = parseFloat(raw_meat_auto);
+    add_to_cookie("raw_meat", auto);
+    document.getElementById("raw_meat").innerHTML = "Raw Meat: " + parseInt(get_cookie("raw_meat")) + " (" + Math.round(auto * 100) / 100 + ")";
     
 
     // Update BUILDS
@@ -155,11 +156,11 @@ function update_resources() {
     document.getElementById("house_tooltip").innerHTML = "Refined Wood: " + parseInt(HOUSE_PRICE * Math.pow(HOUSE_GROWTH, Number(get_cookie("house"))));
 }
 function chance() {
-    if (Math.floor(Math.random() * 10) == 0 && Number(get_cookie("total_people")) < Number(get_cookie("house"))*HOUSE_SIZE) {
+    if (Math.floor(Math.random() * 10) == 0 && Number(get_cookie("population")) < Number(get_cookie("house"))*HOUSE_SIZE) {
         add_to_cookie("people", 1);
         
     }
-    if (Math.floor(Math.random() * 30) == 0 && Number(get_cookie("total_people")) < (Number(get_cookie("house"))-3) * HOUSE_SIZE) {
+    if (Math.floor(Math.random() * 30) == 0 && Number(get_cookie("population")) < (Number(get_cookie("house"))-3) * HOUSE_SIZE) {
         add_to_cookie("people", 4);
         
     }
