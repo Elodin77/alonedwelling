@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>A Lone Dwelling</title>
-    <p>Version 0.0.10</p>
+    <p>Version 0.0.11</p>
     <br>
     <div id="tips">Tips!</div>
     <link rel="stylesheet" href="stylesheet.css" />
@@ -38,7 +38,13 @@
                     <button onclick="add_to_cookie('hunter',-1)">-</button>
                     <br />
                 </div>
-                
+                <div id="soldier_field">
+                    <div id="soldier">Soldier: -</div>
+                    <button onclick="add_to_cookie('soldier',1)">+</button>
+                    <button onclick="add_to_cookie('soldier',-1)">-</button>
+                    <br />
+                </div>
+
 
 
             </td>
@@ -70,8 +76,8 @@
             </td>
         </tr>
     </table>
-    <button onclick="restart(hard=1)">Restart</button>
-
+    <button onclick="restart(hard=1)">Restart</button><br />
+    <div id="events"></div>
 
 
 

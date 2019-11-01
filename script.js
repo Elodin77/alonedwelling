@@ -8,18 +8,19 @@ var HUNTER_EFFICIENCY = 4;
 
 var HOUSE_GROWTH = 1.05;
 var HOUSE_SIZE = 5; // People per house
-var HOUSE_PRICE = 30;
+var HOUSE_PRICE = 40;
 var REFINED_WOOD_WEAPON_PRICE = 5; // amount of refined wood required for 1 weapon
 var FOOD_CONSUMPTION = 0.1; // amount of food each person eats every second.
 
-var PEOPLE = ["people", "woodcutter", "wood_refiner", "hunter"];
-var FORMAT = ["People: ", "Woodcutters: ", "Wood Refiners: ", "Hunters: "];
+var PEOPLE = ["people", "woodcutter", "wood_refiner", "hunter","soldier"];
+var FORMAT = ["People: ", "Woodcutters: ", "Wood Refiners: ", "Hunters: ","Soldiers: "];
 var COOKIE = ["woodcutter", "wood", "people", "house", "refined_wood", "wood_refiner", "happiness", "population", "hunter", "raw_meat",
-    "weapon"
+    "weapon","soldier"
 ];
 var FOOD = ["raw_meat"];
 var TIPS = ["Make your people happy and they will work better! Nobody is happy to work.",
-    "Food is very important. Hunters can help with that, but only if they have weapons to hunt with."
+    "Food is very important. Hunters can help with that, but only if they have weapons to hunt with.",
+    "Soldiers can protect your people, the more resources you have, the stronger the raids."
 ]
 
 //FUNCTIONS
@@ -113,7 +114,7 @@ function update_people() {
         add_to_cookie("food", Number(get_cookie(FOOD[i])));
     }
     add_to_cookie("food", -Number(get_cookie("population")) * FOOD_CONSUMPTION);
-    document.getElementById("food").innerHTML = "Food: " + Number(get_cookie("food"));
+    document.getElementById("food").innerHTML = "Food: " + parseInt(get_cookie("food"));
 
     // Check max
     if (Number(get_cookie("house")) * HOUSE_SIZE < Number(get_cookie("population")) && get_cookie("people")>0) {
@@ -189,21 +190,48 @@ function update_resources() {
 function chance() {
     if (Math.floor(Math.random() * 10) == 0 && Number(get_cookie("population")) < Number(get_cookie("house"))*HOUSE_SIZE && Number(get_cookie("people"))>0) {
         add_to_cookie("people", 1);
-        
+        notify("A stranger arrived.");
     }
     if (Math.floor(Math.random() * 30) == 0 && Number(get_cookie("population")) < (Number(get_cookie("house"))-3) * HOUSE_SIZE&&get_cookie("people")>0) {
         add_to_cookie("people", 4);
+        notify("A family arrived.");
     }
     if (Math.floor(Math.random() * parseFloat(get_cookie("population")) * 10 / (Number(get_cookie("hunter")) + Number(get_cookie("weapon")) / 20)) == 0 && Number(get_cookie("weapon")) >= 1) {
         add_to_cookie("weapon", -1);
+        notify("A weapon broke!");
     }
-    if (Math.floor(Math.random() * (parseFloat(get_cookie("food")) + 10) / Number(get_cookie("population"))) && Number(get_cookie("people"))>0 && Number(get_cookie("population"))>5) {
+    if (Math.floor(Math.random() * (parseFloat(get_cookie("food"))*10) / Number(get_cookie("population")))==0 && Number(get_cookie("people"))>0 && Number(get_cookie("population"))>5) {
         add_to_cookie("people", -1);
+        notify("A person died!");
+    }
+    if (Math.floor(Math.random() * (parseFloat(get_cookie("soldier")) * 10) / Number(get_cookie("house"))) == 0 && Number(get_cookie("house")>3)) {
+        notify("You were raided!!!");
+        add_to_cookie("house", -1);
+        //add_to_cookie("house",-Math.floor(Number(get_cookie("house")) / (Number(get_cookie("soldier")) + 1)));
+        add_to_cookie("wood", -1);
+        //add_to_cookie("wood",-Math.floor(Number(get_cookie("house")) / (Number(get_cookie("soldier")) + 1)));
+        add_to_cookie("soldier", -1);
+        //add_to_cookie("soldier",-Math.floor(Number(get_cookie("house")) / (Number(get_cookie("soldier")) + 1)));
+    }
+    if (Math.floor(Math.random() * 15 / document.getElementById("events").childElementCount) == 0) {
+        update_events();
     }
 
 }
 function update_tips() {
     document.getElementById("tips").innerHTML = TIPS[Math.floor(Math.random() * TIPS.length)];
+}
+function notify(msg) {
+    document.getElementById("events").appendChild(document.createTextNode(msg));
+    document.getElementById("events").appendChild(document.createElement("br"));
+    
+}
+function update_events() {
+    var events = document.getElementById("events");
+    if (events.hasChildNodes()) {
+        events.removeChild(events.childNodes[0]);
+        events.removeChild(events.childNodes[0]);
+    } 
 }
 
 // NON-FUNCTIONS
@@ -213,3 +241,4 @@ setInterval(update_resources, 1000);
 setInterval(chance, 1000);
 setInterval(update_divs, 1000);
 setInterval(update_tips, 10000);
+
