@@ -50,12 +50,14 @@ function restart(hard = 0) {
             set_cookie(COOKIE[i], 0);
         }
         set_cookie("house", 1);
+        set_cookie("people", 2);
     }
     else {
         for (var i = 0; i < COOKIE.length; i++) {
             check_cookie(COOKIE[i],0);
         }
         check_cookie("house", 1);
+        check_cookie("people", 2);
     }
 }
 
@@ -148,7 +150,7 @@ function update_resources() {
     // raw meat
     auto = parseFloat(raw_meat_auto);
     add_to_cookie("raw_meat", auto);
-    document.getElementById("raw_meat").innerHTML = "Raw Meat: " + parseInt(get_cookie("raw_meat")) + " (" + Math.round(auto * 100) / 100 + ")";
+    document.getElementById("raw_meat").innerHTML = "Raw Meat: " + parseInt(get_cookie("raw_meat")) + " (" + Math.round(auto * 100) / 100 + ")"+"";
     
 
     // Update BUILDS
