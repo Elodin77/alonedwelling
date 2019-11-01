@@ -204,7 +204,7 @@ function chance() {
         add_to_cookie("people", -1);
         notify("A person died!");
     }
-    if (Math.floor(Math.random() * (parseFloat(get_cookie("soldier")) * 10) / Number(get_cookie("house"))) == 0 && Number(get_cookie("house"))>6) {
+    if (Math.floor(Math.random() * (parseFloat(get_cookie("soldier")) * 20) / Number(get_cookie("house"))) == 0 && Number(get_cookie("house"))>6) {
         notify("You were raided!!!");
         add_to_cookie("house", -1);
         //add_to_cookie("house",-Math.floor(Number(get_cookie("house")) / (Number(get_cookie("soldier")) + 1)));
