@@ -8,11 +8,19 @@ var HUNTER_EFFICIENCY = 4;
 
 var HOUSE_GROWTH = 1.05;
 var HOUSE_SIZE = 5; // People per house
-var HOUSE_PRICE = 40;
+var HOUSE_PRICE = 30;
+var REFINED_WOOD_WEAPON_PRICE = 5; // amount of refined wood required for 1 weapon
+var FOOD_CONSUMPTION = 0.1; // amount of food each person eats every second.
 
-var PEOPLE = ["people", "woodcutter", "wood_refiner", "hunter","population","raw_meat"];
-var FORMAT = ["People: ", "Woodcutter: ", "Wood Refiner: ", "Hunter: ", "Population: ","Raw Meat: "];
-var COOKIE = ["woodcutter","wood","people","house","refined_wood","wood_refiner","happiness","population","hunter","raw_meat"];
+var PEOPLE = ["people", "woodcutter", "wood_refiner", "hunter"];
+var FORMAT = ["People: ", "Woodcutters: ", "Wood Refiners: ", "Hunters: "];
+var COOKIE = ["woodcutter", "wood", "people", "house", "refined_wood", "wood_refiner", "happiness", "population", "hunter", "raw_meat",
+    "weapon"
+];
+var FOOD = ["raw_meat"];
+var TIPS = ["Make your people happy and they will work better! Nobody is happy to work.",
+    "Food is very important. Hunters can help with that, but only if they have weapons to hunt with."
+]
 
 //FUNCTIONS
 
@@ -79,7 +87,13 @@ function add_to_cookie(key, value) {
                 set_cookie("refined_wood", Number(get_cookie("refined_wood")) - price);
             }
         }
-
+        else if (key == "refined_wood_weapon") {
+            var price = REFINED_WOOD_WEAPON_PRICE;
+            if (Number(get_cookie("refined_wood")) >= price) {
+                set_cookie("weapon", Number(get_cookie("weapon")) + value, 365);
+                set_cookie("refined_wood", Number(get_cookie("refined_wood")) - price);
+            }
+        }
         else {
             set_cookie(key, Number(get_cookie(key)) + value, 365);
         }
@@ -92,9 +106,17 @@ function update_people() {
         document.getElementById(PEOPLE[i]).innerHTML = FORMAT[i] + get_cookie(PEOPLE[i]);
         add_to_cookie("population", Number(get_cookie(PEOPLE[i])));
     }
+    document.getElementById("population").innerHTML = "Population: " + get_cookie("population");
+    // calculate food
+    set_cookie("food", 0);
+    for (var i = 0; i < FOOD.length; i++) {
+        add_to_cookie("food", Number(get_cookie(FOOD[i])));
+    }
+    add_to_cookie("food", -Number(get_cookie("population")) * FOOD_CONSUMPTION);
+    document.getElementById("food").innerHTML = "Food: " + Number(get_cookie("food"));
 
     // Check max
-    if (Number(get_cookie("house")) * HOUSE_SIZE < Number(get_cookie("population"))) {
+    if (Number(get_cookie("house")) * HOUSE_SIZE < Number(get_cookie("population")) && get_cookie("people")>0) {
         add_to_cookie("people", -1);
     }
 
@@ -118,7 +140,7 @@ function update_resources() {
     if (HAPPINESS_DROP > 1) {
         HAPPINESS_DROP *= 0.9;
     }
-    var happiness_multiplier = 1+(parseFloat(get_cookie("happiness")) / 100 - 0.5);
+    var happiness_multiplier = parseFloat(get_cookie("happiness")) / 100;
     var wood_auto = Number(get_cookie("woodcutter")) / WOODCUTTER_EFFICIENCY * happiness_multiplier;
     var refined_wood_auto = Number(get_cookie("wood_refiner")) / WOOD_REFINER_EFFICIENCY * happiness_multiplier;
     var happiness_auto = get_cookie("people") / HAPPINESS_EFFICIENCY;
@@ -148,25 +170,40 @@ function update_resources() {
     document.getElementById("refined_wood").innerHTML = "Refined Wood: " + parseInt(get_cookie("refined_wood")) + " (" + Math.round(auto * 100) / 100 + ")";
 
     // raw meat
-    auto = parseFloat(raw_meat_auto);
+    if (Number(get_cookie("weapon")) > 0) {
+        auto = parseFloat(raw_meat_auto);
+    }
+    else {
+        auto = 0;
+    }
     add_to_cookie("raw_meat", auto);
-    document.getElementById("raw_meat").innerHTML = "Raw Meat: " + parseInt(get_cookie("raw_meat")) + " (" + Math.round(auto * 100) / 100 + ")"+"";
-    
+    document.getElementById("raw_meat").innerHTML = "Raw Meat: " + parseInt(get_cookie("raw_meat")) + " (" + Math.round(auto * 100) / 100 + ")";
+    // weapons
+    document.getElementById("weapon").innerHTML = "Weapons: " + get_cookie("weapon");
 
     // Update BUILDS
     document.getElementById("house").innerHTML = "House: " + parseInt(get_cookie("house"));
     document.getElementById("house_tooltip").innerHTML = "Refined Wood: " + parseInt(HOUSE_PRICE * Math.pow(HOUSE_GROWTH, Number(get_cookie("house"))));
+    document.getElementById("refined_wood_weapon_tooltip").innerHTML = "Refined Wood: " + parseInt(REFINED_WOOD_WEAPON_PRICE);
 }
 function chance() {
-    if (Math.floor(Math.random() * 10) == 0 && Number(get_cookie("population")) < Number(get_cookie("house"))*HOUSE_SIZE) {
+    if (Math.floor(Math.random() * 10) == 0 && Number(get_cookie("population")) < Number(get_cookie("house"))*HOUSE_SIZE && Number(get_cookie("people"))>0) {
         add_to_cookie("people", 1);
         
     }
-    if (Math.floor(Math.random() * 30) == 0 && Number(get_cookie("population")) < (Number(get_cookie("house"))-3) * HOUSE_SIZE) {
+    if (Math.floor(Math.random() * 30) == 0 && Number(get_cookie("population")) < (Number(get_cookie("house"))-3) * HOUSE_SIZE&&get_cookie("people")>0) {
         add_to_cookie("people", 4);
-        
+    }
+    if (Math.floor(Math.random() * parseFloat(get_cookie("population")) * 10 / (Number(get_cookie("hunter")) + Number(get_cookie("weapon")) / 20)) == 0 && Number(get_cookie("weapon")) >= 1) {
+        add_to_cookie("weapon", -1);
+    }
+    if (Math.floor(Math.random() * (parseFloat(get_cookie("food")) + 10) / Number(get_cookie("population"))) && Number(get_cookie("people"))>0 && Number(get_cookie("population"))>5) {
+        add_to_cookie("people", -1);
     }
 
+}
+function update_tips() {
+    document.getElementById("tips").innerHTML = TIPS[Math.floor(Math.random() * TIPS.length)];
 }
 
 // NON-FUNCTIONS
@@ -175,4 +212,4 @@ setInterval(update_people, 100);
 setInterval(update_resources, 1000);
 setInterval(chance, 1000);
 setInterval(update_divs, 1000);
-setInterval()
+setInterval(update_tips, 10000);

@@ -2,9 +2,9 @@
 <html>
 <head>
     <title>A Lone Dwelling</title>
-    <p>Version 0.0.8</p>
+    <p>Version 0.0.10</p>
     <br>
-
+    <div id="tips">Tips!</div>
     <link rel="stylesheet" href="stylesheet.css" />
     <script src="script.js"></script>
 </head>
@@ -51,13 +51,21 @@
 
             </td>
             <td>
-
+                <div class="tooltip">
+                    <div id="refined_wood_weapon">Refined Wood Weapon</div>
+                    <button onclick="add_to_cookie('refined_wood_weapon',1)">+</button>
+                    <span class="tooltiptext" id="refined_wood_weapon_tooltip">tooltip</span>
+                </div>
             </td>
             <td>
                 <div id="happiness">Happiness: -</div><br />
+                <div id="weapon">Weapons: -</div><br />
+                <div id="food">Food: -</div><br />
+                <div id="raw_meat">Raw Meat: -</div><br />
+
                 <div id="wood">Wood: -</div><br />
                 <div id="refined_wood">Refined Wood: -</div><br />
-                <div id="raw_meat">Raw Meat: -</div><br />
+
 
             </td>
         </tr>
