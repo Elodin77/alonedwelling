@@ -57,3 +57,14 @@ div {
         visibility: visible;
 
     }
+    #civ_progress {
+        width: 100%;
+        background-color: grey;
+        display:block;
+    }
+    #civ_progress_bar {
+        width: 1%;
+        height: 30px;
+        background-color:green;
+        display:block;
+    }

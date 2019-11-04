@@ -19,6 +19,10 @@ var FORMAT = ["People: ", "Woodcutters: ", "Wood Refiners: ", "Hunters: ","Soldi
 var COOKIE = ["woodcutter", "wood", "people", "house", "refined_wood", "wood_refiner", "happiness", "population", "hunter",
     "weapon","soldier","food"
 ];
+var CIVILIZATIONS = ["A Hacked Dwelling", "A Lone Dwelling", "A Hamlet", "A Village", "A Town", "A Large Town", "A Suburb",
+"A Small City","A Medium City","A Large City","A Metropolis","A Conurbation","A Megapolis", "A Ecumenopolis"];
+var REQUIREMENTS = [1,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192];
+
 var TIPS = ["Make your people happy and they will work better! Nobody is happy to work.",
     "Food is very important. Hunters can help with that, but only if they have weapons to hunt with.",
     "Soldiers can protect your people, the more resources you have, the stronger the raids.",
@@ -27,6 +31,8 @@ var TIPS = ["Make your people happy and they will work better! Nobody is happy t
     "More apothecaries means that there is a lower chance of new people being born!",
     "Raids can be very dangerous for happiness. Make sure you have protection against raids!"
 ]
+
+
 
 //FUNCTIONS
 
@@ -125,6 +131,20 @@ function update_people() {
 
 }
 function update_divs() {
+    // title
+    var title = "A Hacked Dwelling";
+    var best = 0;
+    for (var i = 0; i < REQUIREMENTS.length; i++) {
+        if (get_cookie("population") > REQUIREMENTS[i]) {
+            title = CIVILIZATIONS[i];
+            best = parseInt(i);
+        }
+    }
+    document.getElementById("civilization").innerHTML = title;
+    // progress bar
+    var progress_bar = document.getElementById("civ_progress_bar");
+    progress_bar.style.width = parseInt(best/REQUIREMENTS.length*100)+"%";
+
     // refined wood
     if (get_cookie("wood") == 0 && get_cookie("woodcutter") == 0 && get_cookie("refined_wood") == 0 && get_cookie("wood_refiner") == 0) {
         document.getElementById("wood_refiner_field").style.display = "none";
@@ -133,6 +153,20 @@ function update_divs() {
     else {
         document.getElementById("wood_refiner_field").style.display = "block";
         document.getElementById("refined_wood").style.display = "block";
+    }
+    // soldier
+    if (get_cookie("weapon") == 0 && get_cookie("soldier") == 0) {
+        document.getElementById("soldier_field").style.display = "none";
+    }
+    else {
+        document.getElementById("soldier_field").style.display = "block";
+    }
+    // hunter
+    if (get_cookie("weapon") == 0 && get_cookie("hunter") == 0) {
+        document.getElementById("hunter_field").style.display = "none";
+    }
+    else {
+        document.getElementById("hunter_field").style.display = "block";
     }
 }
 
@@ -155,7 +189,7 @@ function update_resources() {
     else {
         add_to_cookie("happiness", auto);
     }
-    document.getElementById("happiness").innerHTML = "Happiness: " + parseInt(get_cookie("happiness")) + " (" + Math.round(auto * 100) / 100 + ") " + "["+parseInt(HAPPINESS_DROP)+"]"+"{x"+Math.round(happiness_multiplier*100)/100+"}";
+    document.getElementById("happiness").innerHTML = "Happiness: " + parseInt(get_cookie("happiness")) + " (" + Math.round(auto * 100) / 100 + ") " + "{x"+Math.round(happiness_multiplier*100)/100+"}";
     // wood
     auto = wood_auto - refined_wood_auto;
     if (refined_wood_auto < get_cookie("wood")) {
@@ -197,6 +231,10 @@ function update_resources() {
     document.getElementById("refined_wood_weapon_tooltip").innerHTML = "Refined Wood: " + parseInt(REFINED_WOOD_WEAPON_PRICE);
 }
 function chance() {
+    if (Math.floor(Math.random() * 10) == 0 && document.getElementById("entry_allowed").value == "on") {
+        notify("A stranger arrived!");
+        add_to_cookie("people", 1);
+    }
     if (Math.floor(Math.random() * BIRTH_CHANCE/Number(get_cookie("people"))) == 0 && Number(get_cookie("people"))>1) {
         add_to_cookie("people", 1);
         notify("A person was born!");
@@ -212,21 +250,27 @@ function chance() {
     }
     // RAIDING
     var power = 0;
-    for (var i = 0; i < COOKIE.Length; i++) {
+    for (var i = 0; i < COOKIE.length; i++) {
         power += Number(get_cookie(COOKIE[i])) / 10;
     }
     if (Math.floor(Math.random() * (parseFloat(get_cookie("soldier")) * 60) / power) == 0 && Number(get_cookie("house"))>2) {
-        notify("You were raided!!!");
-        for (var i = 0; i < COOKIE.Length;i++) {
+        notify("You were raided by "+parseInt(power)+" raiders!");
+        for (var i = 0; i < COOKIE.length;i++) {
             if (!PEOPLE.includes(COOKIE[i])) {
-                add_to_cookie(COOKIE[i], Number(get_cookie(COOKIE[i])) * min(Number(get_cookie("soldier")) / power, 1));
+                set_cookie(COOKIE[i], Number(get_cookie(COOKIE[i])) * Math.min((Number(get_cookie("soldier"))+1) / power, 1));
             }
         }
         add_to_cookie("soldier", -power);
         if (get_cookie("soldier") < 0) {
             set_cookie("soldier", 0);
         }
-        HAPPINESS_DROP += power / Number(get_cookie("soldier"));
+        if (get_cookie("house") < 2) {
+            set_cookie("house", 2);
+        }
+        if (get_cookie("people") < 2) {
+            set_cookie("people", 2);
+        }
+        HAPPINESS_DROP += power / (Number(get_cookie("soldier"))+1);
     }
     if (Math.floor(Math.random() * 15 / document.getElementById("events").childElementCount) == 0) {
         update_events();

@@ -2,22 +2,27 @@
 <html>
 <head>
     <title>A Lone Dwelling</title>
-    <p>Version 0.0.13</p>
+    <p>Version 0.0.14d</p>
     <br>
-    <div id="tips">Tips!</div>
+
     <link rel="stylesheet" href="stylesheet.css" />
     <script src="script.js"></script>
 </head>
 <body>
+    <div id="civ_progress">
+        <div id="civ_progress_bar"></div>
+    </div>
+    <div id="tips">Tips!</div>
     <table style="width:100%">
         <tr>
-            <th id="title">A Lone Dwelling</th>
+            <th id="civilization">A Lone Dwelling</th>
             <th>Build</th>
             <th>Craft</th>
             <th>Resources</th>
         </tr>
         <tr>
             <td>
+                <input id="entry_allowed" type="checkbox" />Allow Entry<br />
                 <div id="population">Population: -</div><br />
                 <div id="people">People: -</div><br />
                 <div id="woodcutter_field">
